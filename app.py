@@ -26,7 +26,7 @@ security = Security(app, use_datastore)
 #     init_db()
 #     use_datastore.create_user(username='henry', email='henrymbuguak@gmail.com', password='password')
 #     db_session.commit()
-#
+
 
 # views
 @app.route('/')
