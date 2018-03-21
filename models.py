@@ -3,6 +3,7 @@ from flask_security import UserMixin, RoleMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, DateTime, Column, Integer, String, ForeignKey
+import datetime
 
 
 class RolesUsers(Base):
@@ -33,3 +34,40 @@ class User(Base, UserMixin):
     active = Column(Boolean())
     confirmed_at = Column(DateTime())
     roles = relationship('Role', secondary='role_users', backref=backref('users', lazy='dynamic'))
+
+
+class Genre(Base):
+    __tablename__ = 'genre'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(255), unique=True)
+    created_on = Column(DateTime(), default=datetime.datetime.now())
+    updated_on = Column(DateTime(), default=datetime.datetime.now())
+
+
+class Author(Base):
+    __tablename__ = 'author'
+    id = Column(Integer(), primary_key=True)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    created_on = Column(DateTime(), default=datetime.datetime.now())
+    updated_on = Column(DateTime(), default=datetime.datetime.now())
+
+
+class Language(Base):
+    __tablename__ = 'language'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String())
+    created_on = Column(DateTime(), default=datetime.datetime.now())
+    updated_on = Column(DateTime(), default=datetime.datetime.now())
+
+
+class Book(Base):
+    __tablename__ = 'book'
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(255))
+    author = Column('author', Integer(), ForeignKey('author.id'))
+    genre = Column('genre', Integer(), ForeignKey('genre.id'))
+    language = Column('language', Integer(), ForeignKey('language.id'))
+    summary = Column(String(255))
+    created_on = Column(DateTime(), default=datetime.datetime.now())
+    updated_on = Column(DateTime(), default=datetime.datetime.now())

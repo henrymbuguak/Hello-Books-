@@ -7,7 +7,40 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <p class="text-muted">Hell welcome to flask</p>
+            <div class="jumbotron">
+                <h1>Flask Book Library</h1>
+                <p>This is simple book management app created using flask web framework and python 3.6. This is
+                    my first application in flask. To view book summary and borrow, register or login.
+                </p>
+                <p>
+                    <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">get the code »</a>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+             {% for book in books %}
+                <div class="col-md-6">
+                      <div class="media">
+                     <div class="media-left media-middle">
+                         <a href="#">
+                             <img src="{{ url_for('static', filename = '/img/index.jpeg') }}" width="200" height="200">
+                         </a>
+                     </div>
+                     <div class="media-body">
+                         <h4 class="media-heading">{{ book.title}} </h4><br>
+                         <p style="font-weight: 100">by {{ book.first_name}}  {{ book.last_name}}</p><br>
+                         <p class="text-muted">Genre: {{ book.name }}</p>
+                         <p class="text-muted">Language: {{ book.language }}</p>
+                     </div>
+                          <br><br>
+                </div>
+                </div>
+             {% endfor %}
+        </div>
+        <div>
+            <footer class="footer">
+                <p>© 2018 Henrylab, Inc.</p>
+            </footer>
         </div>
     </div>
 {% endblock content %}

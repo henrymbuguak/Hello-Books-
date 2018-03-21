@@ -8,11 +8,11 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ url_for('static', filename = '/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename = '/css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename = '/css/dashboard.css') }}">
       {% block styles %}{% endblock %}
   </head>
   <body>
-        {% include 'navbar.html' %}
+        {% include '/admins/nav.html' %}
       {% block content %}
 
       {% endblock content %}
