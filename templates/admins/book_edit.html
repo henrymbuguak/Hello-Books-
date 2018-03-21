@@ -1,0 +1,66 @@
+{% extends 'master.html' %}
+
+
+{% block title %}Andela | Hello books{% endblock title %}
+
+{% block styles %}
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            {% include '/admins/sidenav.html' %}
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Add a book </h1>
+
+
+          <div class="row">
+            <div class="col-md-6">
+                <form method="post" action="{{ url_for('admin_dashboard_book_update', id=book.id) }}">
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" name="title" id="title" required="True" class="form-control" value="{{ book.title}}">
+                    </div>
+                     <div class="form-group">
+                     <label for="author">Select author *</label>
+                     <select class="form-control" id="author" name="author">
+                     <option value="{{ book.author }}">-----------------------------------------------</option>
+                         {% for foo in authors %}
+                             <option value="{{ foo.id }}">{{ foo.first_name }} {{ foo.last_name }}</option>
+                         {% endfor %}
+                     </select>
+                     </div>
+                    <div class="form-group">
+                     <label for="language">Select language *</label>
+                     <select class="form-control" id="language" name="language">
+                     <option value="{{book.language}}">-----------------------------------------------</option>
+                         {% for foo in languages %}
+                             <option value="{{ foo.id }}">{{ foo.name }}</option>
+                         {% endfor %}
+                     </select>
+                     </div>
+                    <div class="form-group">
+                     <label for="genre">Select genre *</label>
+                     <select class="form-control" id="genre" name="genre" required="">
+                     <option value="{{ book.genre}}">--------------------------------------------------</option>
+                         {% for foo in genres %}
+                             <option value="{{ foo.id }}">{{ foo.name }}</option>
+                         {% endfor %}
+                     </select>
+                     </div>
+                     <div class="form-group">
+                         <label for="summary">Description</label>
+                         <textarea class="form-control" id="summary" rows="3" name="summary">{{ book.summary }}</textarea>
+                     </div>
+                    <button type="submit" class="btn btn-primary">update</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}

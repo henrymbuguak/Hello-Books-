@@ -6,7 +6,7 @@ from models import User, Role, Language, Genre, Book, Author
 
 mail = Mail()
 # Create app
-app = Flask(__name__)
+app = Flask(__name__, static_url_path = "", static_folder = "static")
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'super-secret'
 app.config['SECURITY_REGISTERABLE'] = True
@@ -31,7 +31,8 @@ security = Security(app, use_datastore)
 # views
 @app.route('/')
 def home():
-    return render_template('index.html')
+    books = Book.query.join(Author, Book.author== Author.id).join(Language, Book.language== Language.id).join(Genre, Book.genre== Genre.id).add_columns(Genre.name, Language.name.label('language'), Author.first_name, Author.last_name, Book.summary, Book.id, Book.title)
+    return render_template('index.html', books=books)
 
 
 @app.route('/dashboard')
@@ -44,8 +45,15 @@ def dashboard():
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
-    books = Book.query.all()
+    books = Book.query.join(Author, Book.author==Author.id).add_columns(Author.first_name, Book.id, Book.title)
     return render_template('/admins/index.html', books=books)
+
+
+@app.route('/admin/dashboard/users')
+@login_required
+def admin_registered_users():
+    users = User.query.all()
+    return render_template('/admins/users.html', users=users)
 
 
 @app.route('/admin/dashboard/book/add', methods=['GET', 'POST'])
@@ -67,6 +75,51 @@ def admin_dashboard_book_add():
         flash('Book successfully added')
         return redirect(url_for('admin_dashboard'))
     return render_template('/admins/book_add.html', genres=genres, languages=languages, authors=authors)
+
+
+@app.route('/admin/dashboard/book/edit/<int:id>', methods=['GET'])
+@login_required
+def admin_dashboard_book_edit(id):
+    book = Book.query.filter_by(id=id).first()
+    genres = Genre.query.all()
+    languages = Language.query.all()
+    authors = Author.query.all()
+    return render_template('/admins/book_edit.html', book=book, genres=genres, languages=languages, authors=authors)
+
+
+@app.route('/admin/dashboard/book/update/<int:id>', methods=['POST'])
+@login_required
+def admin_dashboard_book_update(id):
+    book = Book.query.filter_by(id=id).first()
+    title = request.form.get('title')
+    author = request.form.get('author')
+    language = request.form.get('language')
+    genre = request.form.get('genre')
+    book.title = title
+    book.author = author
+    book.language = language
+    book.genre = genre
+    db_session.commit()
+    flash('Book successfully updated')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/dashboard/book/delete/<int:id>', methods=['GET'])
+@login_required
+def admin_dashboard_book_delete(id):
+    book = Book.query.filter_by(id=id).first()
+    db_session.delete(book)
+    db_session.commit()
+    flash('Book successfully deleted')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/dashboard/book/detail/<int:id>', methods=['GET'])
+@login_required
+def admin_dashboard_book_detail(id):
+    book = Book.query.join(Author, Book.author== Author.id).join(Language, Book.language== Language.id).join(Genre, Book.genre== Genre.id).filter(Book.id == id ).add_columns(Genre.name, Language.name.label('language'), Author.first_name, Author.last_name, Book.summary, Book.id, Book.title).first()
+    print(book.name)
+    return render_template('/admins/book_detail.html', book=book)
 
 
 @app.route('/admin/dashboard/language')
